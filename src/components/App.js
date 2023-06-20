@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import HomePage from "../pages/HomePage";
-import CalorieCompanionPage from "../pages/CalorieCompanionPage";
-import FashionFinderPage from "../pages/FashionFinderPage";
 import "../index.css";
 import "./App.css";
 
@@ -138,14 +136,6 @@ const App = () => {
               isLoading={isLoading}
             />
           }
-        />
-        <Route
-          path="/calorie-companion"
-          element={<CalorieCompanionPage darkMode={darkMode} />}
-        />
-        <Route
-          path="/fashion-finder"
-          element={<FashionFinderPage darkMode={darkMode} />}
         />
       </Routes>
     </Router>
