@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import ScrollToTopButton from "../components/ScrollToTopButton";
 
 const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
@@ -88,6 +89,9 @@ function ImageGenerationTab({ darkMode }) {
           <img src={generatedImage} alt="Generated" width="300" />
         </div>
       ) : null}
+            <div className="scroll-to-top-button-container">
+            <ScrollToTopButton />
+          </div>
     </div>
   );
 }
