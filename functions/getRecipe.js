@@ -14,8 +14,8 @@ exports.handler = async function(event, context) {
         {
           image: { content: base64data.split(",")[1] },
           features: [
-            { type: "WEB_DETECTION", maxResults: 5 },
-            { type: "LABEL_DETECTION", maxResults: 5 },
+            { type: "WEB_DETECTION", maxResults: 1 },
+            { type: "LABEL_DETECTION", maxResults: 1 },
           ],
         },
       ],
