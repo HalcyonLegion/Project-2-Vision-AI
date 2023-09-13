@@ -30,7 +30,7 @@ const handleImageUpload = async (event) => {
     setImageUrl(base64data);
 
     try {
-      const response = await fetch('/.netlify/functions/getRecipe', {
+      const response = await fetch('/netlify/functions/getRecipe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
