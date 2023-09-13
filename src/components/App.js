@@ -10,25 +10,25 @@ const googleLensApiKey = process.env.REACT_APP_GOOGLE_LENS_API_KEY;
 const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
 const App = () => {
-  const [darkMode, setDarkMode] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
-  const [imageInfo, setImageInfo] = useState("");
-  const [recipe, setRecipe] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+const [darkMode, setDarkMode] = useState(false);
+const [imageUrl, setImageUrl] = useState("");
+const [imageInfo, setImageInfo] = useState("");
+const [recipe, setRecipe] = useState("");
+const [isLoading, setIsLoading] = useState(false);
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
+const toggleDarkMode = () => {
+setDarkMode(!darkMode);
+};
 
-  const handleImageUpload = async (event) => {
-    setIsLoading(true);
-    const file = event.target.files[0];
-    const reader = new FileReader();
+const handleImageUpload = async (event) => {
+setIsLoading(true);
+const file = event.target.files[0];
+const reader = new FileReader();
 
     reader.onloadend = async () => {
       const base64data = reader.result;
       setImageUrl(base64data);
-
+    
       try {
         const response = await fetch(
           `https://vision.googleapis.com/v1/images:batchAnnotateImages?key=${googleLensApiKey}`,
@@ -36,6 +36,7 @@ const App = () => {
             method: "POST",
             headers: {
               "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods": "POST",
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -59,7 +60,7 @@ const App = () => {
             }),
           }
         );
-
+    
         const data = await response.json();
         const description =
               data.responses[0].labelAnnotations[0].description;
@@ -69,7 +70,7 @@ const App = () => {
         console.error("Error:", error);
       }
     };
-
+    
     reader.readAsDataURL(file);
   };
 
