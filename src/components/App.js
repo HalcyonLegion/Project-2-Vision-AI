@@ -61,7 +61,7 @@ const App = () => {
 
         const data = await response.json();
         const description =
-          data.responses[0].webDetection.bestGuessLabels[0].label;
+              data.responses[0].labelAnnotations[0].description;
         setImageInfo(description);
         getRecipe(description);
       } catch (error) {
