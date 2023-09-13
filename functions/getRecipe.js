@@ -6,20 +6,26 @@ exports.handler = async function(event, context) {
 
   // Fetch data from Google Vision API
   let visionApiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${googleLensApiKey}`;
+  
+  let visionRequestBody = {
+    requests: [
+      {
+        image: { content: base64data.split(",")[1] },
+        features: [
+          { type: "WEB_DETECTION", maxResults: 5 },
+          { type: "LABEL_DETECTION", maxResults: 5 },
+        ],
+      },
+    ],
+  };
+
+
+  console.log("Sending to Google Lens:", visionRequestBody); // Console Log
+
   const visionResponse = await fetch(visionApiUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      requests: [
-        {
-          image: { content: base64data.split(",")[1] },
-          features: [
-            { type: "WEB_DETECTION", maxResults: 5 },
-            { type: "LABEL_DETECTION", maxResults: 5 },
-          ],
-        },
-      ],
-    }),
+    body: JSON.stringify(visionRequestBody),
   });
 
   const visionData = await visionResponse.json();
@@ -27,20 +33,25 @@ exports.handler = async function(event, context) {
 
   // Fetch data from OpenAI API
   let openaiUrl = "https://api.openai.com/v1/chat/completions";
+
+  let openaiRequestBody = {
+    model: "gpt-3.5-turbo",
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are a Recipe and Nutrition expert who finds recipes and nutritional information based on the user's input.",
+      },
+      { role: "user", content: `Please return a recipe based on ${description} and give me some nutritional information about the recipe.` },
+    ],
+  };
+
+  console.log("Sending to OpenAI:", openaiRequestBody); // Console Log
+
   const openaiResponse = await fetch(openaiUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${openaiApiKey}` },
-    body: JSON.stringify({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a Recipe and Nutrition expert who finds recipes and nutritional information based on the user's input.",
-        },
-        { role: "user", content: `Please return a recipe based on ${description} and give me some nutritional information about the recipe.` },
-      ],
-    }),
+    body: JSON.stringify(openaiRequestBody),
   });
 
   const openaiData = await openaiResponse.json();
