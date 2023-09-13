@@ -5,18 +5,18 @@ exports.handler = async function(event, context) {
   const { base64data, googleLensApiKey, openaiApiKey } = body;
 
   // Fetch data from Google Vision API
-let visionApiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${googleLensApiKey}`;
-const visionRequestBody = {
-  requests: [
-    {
-      image: { content: base64data.split(",")[1] },
-      features: [
-        { type: "WEB_DETECTION", maxResults: 5 },
-        { type: "LABEL_DETECTION", maxResults: 5 },
-      ],
-    },
-  ],
-};
+  let visionApiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${googleLensApiKey}`;
+  const visionRequestBody = {
+    requests: [
+      {
+        image: { content: base64data.split(",")[1] },
+        features: [
+          { type: "WEB_DETECTION", maxResults: 5 },
+          { type: "LABEL_DETECTION", maxResults: 5 },
+        ],
+      },
+    ],
+  };
 
 console.log(`Sending the following payload to Google Vision API: ${JSON.stringify(visionRequestBody)}`);
 const visionResponse = await fetch(visionApiUrl, {
@@ -24,9 +24,12 @@ const visionResponse = await fetch(visionApiUrl, {
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(visionRequestBody),
 });
+  
+const visionData = await visionResponse.json();
 
-  const visionData = await visionResponse.json();
-  const description = visionData.responses[0].labelAnnotations[0].description;
+console.log(`Received the following response from Google Vision API: ${JSON.stringify(visionData)}`);
+
+const description = visionData.responses[0].labelAnnotations[0].description;
 
   // Fetch data from OpenAI API
   let openaiUrl = "https://api.openai.com/v1/chat/completions";
