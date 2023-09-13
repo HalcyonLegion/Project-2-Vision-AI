@@ -31,7 +31,7 @@ const App = () => {
 
       try {
         const response = await fetch(
-          `https://vision.googleapis.com/v1/images:annotate?key=${googleLensApiKey}`,
+          `https://vision.googleapis.com/v1/images:batchAnnotateImages?key=${googleLensApiKey}`,
           {
             method: "POST",
             headers: {
