@@ -1,29 +1,53 @@
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
 
-const handler = async function () {
-  try {
-    const response = await fetch('https://icanhazdadjoke.com', {
-      headers: { Accept: 'application/json' },
-    })
-    if (!response.ok) {
-      // NOT res.status >= 200 && res.status < 300
-      return { statusCode: response.status, body: response.statusText }
-    }
-    const data = await response.json()
+exports.handler = async function(event, context) {
+  const body = JSON.parse(event.body);
+  const { base64data, googleLensApiKey, openaiApiKey } = body;
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ msg: data.joke }),
-    }
-  } catch (error) {
-    // output to netlify function log
-    console.log(error)
-    return {
-      statusCode: 500,
-      // Could be a custom message or object i.e. JSON.stringify(err)
-      body: JSON.stringify({ msg: error.message }),
-    }
-  }
-}
+  // Fetch data from Google Vision API
+  let visionApiUrl = `https://vision.googleapis.com/v1/images:batchAnnotateImages?key=${googleLensApiKey}`;
+  const visionResponse = await fetch(visionApiUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      requests: [
+        {
+          image: { content: base64data.split(",")[1] },
+          features: [
+            { type: "WEB_DETECTION", maxResults: 5 },
+            { type: "LABEL_DETECTION", maxResults: 5 },
+          ],
+        },
+      ],
+    }),
+  });
 
-module.exports = { handler }
+  const visionData = await visionResponse.json();
+  const description = visionData.responses[0].labelAnnotations[0].description;
+
+  // Fetch data from OpenAI API
+  let openaiUrl = "https://api.openai.com/v1/chat/completions";
+  const openaiResponse = await fetch(openaiUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${openaiApiKey}` },
+    body: JSON.stringify({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a Recipe and Nutrition expert who finds recipes and nutritional information based on the user's input.",
+        },
+        { role: "user", content: `Please return a recipe based on ${description} and give me some nutritional information about the recipe.` },
+      ],
+    }),
+  });
+
+  const openaiData = await openaiResponse.json();
+  const recipe = openaiData.choices[0].message.content;
+  
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ description, recipe }),
+  };
+};
