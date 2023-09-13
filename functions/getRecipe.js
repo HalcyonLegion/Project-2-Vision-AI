@@ -29,7 +29,7 @@ const visionData = await visionResponse.json();
 
 console.log(`Received the following response from Google Vision API: ${JSON.stringify(visionData)}`);
 
-const description = visionData.responses[0].bestGuessLabels[0].label;
+const description = visionData.responses[0].webDetection.bestGuessLabels[0].label;
 
   // Fetch data from OpenAI API
   let openaiUrl = "https://api.openai.com/v1/chat/completions";
