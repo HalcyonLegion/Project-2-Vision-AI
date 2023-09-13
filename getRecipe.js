@@ -5,7 +5,7 @@ exports.handler = async function(event, context) {
   const { base64data, googleLensApiKey, openaiApiKey } = body;
 
   // Fetch data from Google Vision API
-  let visionApiUrl = `https://vision.googleapis.com/v1/images:batchAnnotateImages?key=${googleLensApiKey}`;
+  let visionApiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${googleLensApiKey}`;
   const visionResponse = await fetch(visionApiUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
